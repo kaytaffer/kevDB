@@ -1,4 +1,5 @@
 CREATE TYPE SKILL AS ENUM ('beginner', 'intermediate', 'advanced');
+CREATE TYPE GENRE_ENUM AS ENUM ('rock', 'jazz', 'jizz', 'punk', 'classical')
 
 CREATE TABLE instructor_commission (
  id INT GENERATED ALWAYS AS IDENTITY NOT NULL,
@@ -131,7 +132,7 @@ ALTER TABLE lesson ADD CONSTRAINT PK_lesson PRIMARY KEY (timeslot_id,instructor_
 CREATE TABLE student (
  id INT GENERATED ALWAYS AS IDENTITY NOT NULL,
  person_id INT NOT NULL,
- contact_person INT
+ contact_person_id INT
 );
 
 ALTER TABLE student ADD CONSTRAINT PK_student PRIMARY KEY (id);
@@ -150,7 +151,8 @@ CREATE TABLE ensemble_lesson (
  instructor_id INT NOT NULL,
  students_max_amount INT NOT NULL,
  students_min_amount INT NOT NULL,
- genre VARCHAR(50) NOT NULL
+ genre GENRE_ENUM NOT NULL,
+ student INT NOT NULL
 );
 
 ALTER TABLE ensemble_lesson ADD CONSTRAINT PK_ensemble_lesson PRIMARY KEY (timeslot_id,instructor_id);
@@ -158,7 +160,7 @@ ALTER TABLE ensemble_lesson ADD CONSTRAINT PK_ensemble_lesson PRIMARY KEY (times
 
 CREATE TABLE ensemble_proficiency (
  instructor_id INT NOT NULL,
- genre VARCHAR(50) NOT NULL
+ genre GENRE_ENUM NOT NULL
 );
 
 ALTER TABLE ensemble_proficiency ADD CONSTRAINT PK_ensemble_proficiency PRIMARY KEY (instructor_id,genre);
@@ -170,7 +172,8 @@ CREATE TABLE group_lesson (
  students_max_amount INT NOT NULL,
  students_min_amount INT NOT NULL,
  instrument_to_learn VARCHAR(50) NOT NULL,
- instrument_type_id INT
+ instrument_type_id INT,
+ student_id INT
 );
 
 ALTER TABLE group_lesson ADD CONSTRAINT PK_group_lesson PRIMARY KEY (timeslot_id,instructor_id);
@@ -179,7 +182,8 @@ ALTER TABLE group_lesson ADD CONSTRAINT PK_group_lesson PRIMARY KEY (timeslot_id
 CREATE TABLE individual_lesson (
  timeslot_id INT NOT NULL,
  instructor_id INT NOT NULL,
- id INT NOT NULL
+ instrument_type_id INT NOT NULL,
+ student_id INT NOT NULL
 );
 
 ALTER TABLE individual_lesson ADD CONSTRAINT PK_individual_lesson PRIMARY KEY (timeslot_id,instructor_id);
@@ -237,7 +241,7 @@ ALTER TABLE lesson ADD CONSTRAINT FK_lesson_3 FOREIGN KEY (price_list_id) REFERE
 
 
 ALTER TABLE student ADD CONSTRAINT FK_student_0 FOREIGN KEY (person_id) REFERENCES person (id);
-ALTER TABLE student ADD CONSTRAINT FK_student_1 FOREIGN KEY (contact_person) REFERENCES contact_person (id);
+ALTER TABLE student ADD CONSTRAINT FK_student_1 FOREIGN KEY (contact_person_id) REFERENCES contact_person (id);
 
 
 ALTER TABLE student_skill_level ADD CONSTRAINT FK_student_skill_level_0 FOREIGN KEY (student_id) REFERENCES student (id) ON DELETE CASCADE;
@@ -245,6 +249,7 @@ ALTER TABLE student_skill_level ADD CONSTRAINT FK_student_skill_level_1 FOREIGN 
 
 
 ALTER TABLE ensemble_lesson ADD CONSTRAINT FK_ensemble_lesson_0 FOREIGN KEY (timeslot_id,instructor_id) REFERENCES lesson (timeslot_id,instructor_id);
+ALTER TABLE ensemble_lesson ADD CONSTRAINT FK_ensemble_lesson_1 FOREIGN KEY (student_id) REFERENCES student (id) ON DELETE SET NULL;
 
 
 ALTER TABLE ensemble_proficiency ADD CONSTRAINT FK_ensemble_proficiency_0 FOREIGN KEY (instructor_id) REFERENCES instructor (id) ON DELETE CASCADE;
@@ -252,10 +257,12 @@ ALTER TABLE ensemble_proficiency ADD CONSTRAINT FK_ensemble_proficiency_0 FOREIG
 
 ALTER TABLE group_lesson ADD CONSTRAINT FK_group_lesson_0 FOREIGN KEY (timeslot_id,instructor_id) REFERENCES lesson (timeslot_id,instructor_id);
 ALTER TABLE group_lesson ADD CONSTRAINT FK_group_lesson_1 FOREIGN KEY (instrument_type_id) REFERENCES instrument_type (id);
+ALTER TABLE group_lesson ADD CONSTRAINT FK_group_lesson_2 FOREIGN KEY (student_id) REFERENCES student (id) ON DELETE SET NULL;
 
 
 ALTER TABLE individual_lesson ADD CONSTRAINT FK_individual_lesson_0 FOREIGN KEY (timeslot_id,instructor_id) REFERENCES lesson (timeslot_id,instructor_id);
-ALTER TABLE individual_lesson ADD CONSTRAINT FK_individual_lesson_1 FOREIGN KEY (id) REFERENCES instrument_type (id);
+ALTER TABLE individual_lesson ADD CONSTRAINT FK_individual_lesson_1 FOREIGN KEY (instrument_type_id) REFERENCES instrument_type (id);
+ALTER TABLE individual_lesson ADD CONSTRAINT FK_individual_lesson_2 FOREIGN KEY (student_id) REFERENCES student (id) ON DELETE SET NULL;
 
 
 ALTER TABLE lease_for_instrument ADD CONSTRAINT FK_lease_for_instrument_0 FOREIGN KEY (instrument_id) REFERENCES rental_instrument (id);
