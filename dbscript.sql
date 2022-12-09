@@ -1,3 +1,8 @@
+\c postgres;
+DROP DATABASE seminar3;
+CREATE DATABASE seminar3;
+\c seminar3;
+
 CREATE TYPE SKILL AS ENUM ('beginner', 'intermediate', 'advanced');
 
 CREATE TABLE instructor_commission (
@@ -63,8 +68,7 @@ ALTER TABLE skill_level ADD CONSTRAINT PK_skill_level PRIMARY KEY (id);
 
 CREATE TABLE timeslot (
  id INT GENERATED ALWAYS AS IDENTITY NOT NULL,
- time_from TIMESTAMP(6) NOT NULL,
- time_to TIMESTAMP(6) NOT NULL
+ lesson_start TIMESTAMP(6) NOT NULL
 );
 
 ALTER TABLE timeslot ADD CONSTRAINT PK_timeslot PRIMARY KEY (id);
@@ -74,7 +78,7 @@ CREATE TABLE contact_details (
  person_id INT NOT NULL,
  phone_number VARCHAR(12) NOT NULL,
  email VARCHAR(50) NOT NULL,
- street_adress VARCHAR(50) NOT NULL,
+ street_address VARCHAR(50) NOT NULL,
  zip_code CHAR(5) NOT NULL
 );
 
@@ -125,7 +129,7 @@ CREATE TABLE lesson (
  students_min_amount CHAR(10) NOT NULL
 );
 
-ALTER TABLE lesson ADD CONSTRAINT PK_lesson PRIMARY KEY (instructor_id,timeslot_id,instructor_commission_id,price_list_id);
+ALTER TABLE lesson ADD CONSTRAINT PK_lesson PRIMARY KEY (instructor_id,timeslot_id);
 
 
 CREATE TABLE student (
@@ -159,12 +163,10 @@ ALTER TABLE student_skill_level ADD CONSTRAINT PK_student_skill_level PRIMARY KE
 CREATE TABLE ensemble_lesson (
  instructor_id INT NOT NULL,
  timeslot_id INT NOT NULL,
- instructor_commission_id INT NOT NULL,
- price_list_id INT NOT NULL,
  genre VARCHAR(50) NOT NULL
 );
 
-ALTER TABLE ensemble_lesson ADD CONSTRAINT PK_ensemble_lesson PRIMARY KEY (instructor_id,timeslot_id,instructor_commission_id,price_list_id);
+ALTER TABLE ensemble_lesson ADD CONSTRAINT PK_ensemble_lesson PRIMARY KEY (instructor_id,timeslot_id);
 
 
 CREATE TABLE ensemble_proficiency (
@@ -178,13 +180,10 @@ ALTER TABLE ensemble_proficiency ADD CONSTRAINT PK_ensemble_proficiency PRIMARY 
 CREATE TABLE instrument_lesson (
  instructor_id INT NOT NULL,
  timeslot_id INT NOT NULL,
- instructor_commission_id INT NOT NULL,
- price_list_id INT NOT NULL,
- instrument_to_learn VARCHAR(50) NOT NULL,
- instrument_type_id INT
+ instrument_type_id INT NOT NULL
 );
 
-ALTER TABLE instrument_lesson ADD CONSTRAINT PK_instrument_lesson PRIMARY KEY (instructor_id,timeslot_id,instructor_commission_id,price_list_id);
+ALTER TABLE instrument_lesson ADD CONSTRAINT PK_instrument_lesson PRIMARY KEY (instructor_id,timeslot_id);
 
 
 CREATE TABLE lease_for_instrument (
@@ -243,20 +242,20 @@ ALTER TABLE student ADD CONSTRAINT FK_student_1 FOREIGN KEY (contact_person_id) 
 
 
 ALTER TABLE student_lesson ADD CONSTRAINT FK_student_lesson_0 FOREIGN KEY (student_id) REFERENCES student (id) ON DELETE CASCADE;
-ALTER TABLE student_lesson ADD CONSTRAINT FK_student_lesson_1 FOREIGN KEY (instructor_id,timeslot_id,instructor_commission_id,price_list_id) REFERENCES lesson (instructor_id,timeslot_id,instructor_commission_id,price_list_id);
+ALTER TABLE student_lesson ADD CONSTRAINT FK_student_lesson_1 FOREIGN KEY (instructor_id,timeslot_id) REFERENCES lesson (instructor_id,timeslot_id);
 
 
 ALTER TABLE student_skill_level ADD CONSTRAINT FK_student_skill_level_0 FOREIGN KEY (student_id) REFERENCES student (id) ON DELETE CASCADE;
 ALTER TABLE student_skill_level ADD CONSTRAINT FK_student_skill_level_1 FOREIGN KEY (skill_level_id) REFERENCES skill_level (id) ON DELETE CASCADE;
 
 
-ALTER TABLE ensemble_lesson ADD CONSTRAINT FK_ensemble_lesson_0 FOREIGN KEY (instructor_id,timeslot_id,instructor_commission_id,price_list_id) REFERENCES lesson (instructor_id,timeslot_id,instructor_commission_id,price_list_id);
+ALTER TABLE ensemble_lesson ADD CONSTRAINT FK_ensemble_lesson_0 FOREIGN KEY (instructor_id,timeslot_id) REFERENCES lesson (instructor_id,timeslot_id);
 
 
 ALTER TABLE ensemble_proficiency ADD CONSTRAINT FK_ensemble_proficiency_0 FOREIGN KEY (instructor_id) REFERENCES instructor (id) ON DELETE CASCADE;
 
 
-ALTER TABLE instrument_lesson ADD CONSTRAINT FK_instrument_lesson_0 FOREIGN KEY (instructor_id,timeslot_id,instructor_commission_id,price_list_id) REFERENCES lesson (instructor_id,timeslot_id,instructor_commission_id,price_list_id);
+ALTER TABLE instrument_lesson ADD CONSTRAINT FK_instrument_lesson_0 FOREIGN KEY (instructor_id,timeslot_id) REFERENCES lesson (instructor_id,timeslot_id);
 ALTER TABLE instrument_lesson ADD CONSTRAINT FK_instrument_lesson_1 FOREIGN KEY (instrument_type_id) REFERENCES instrument_type (id);
 
 
@@ -267,5 +266,6 @@ ALTER TABLE lease_for_instrument ADD CONSTRAINT FK_lease_for_instrument_1 FOREIG
 ALTER TABLE sibling_relation ADD CONSTRAINT FK_sibling_relation_0 FOREIGN KEY (student_id) REFERENCES student (id) ON DELETE CASCADE;
 ALTER TABLE sibling_relation ADD CONSTRAINT FK_sibling_relation_1 FOREIGN KEY (student_sibling_id) REFERENCES student (id) ON DELETE CASCADE;
 
-ALTER TABLE sibling_discount    ADD CONSTRAINT unique_date_discount     UNIQUE (start_date);ALTER TABLE person ADD CONSTRAINT unique_personal_number UNIQUE (personal_number);
+
+ALTER TABLE person ADD CONSTRAINT unique_personal_number UNIQUE (personal_number);
 
