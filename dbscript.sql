@@ -93,7 +93,6 @@ CREATE TABLE contact_person (
 
 ALTER TABLE contact_person ADD CONSTRAINT PK_contact_person PRIMARY KEY (id);
 
-
 CREATE TABLE instructor (
  id INT GENERATED ALWAYS AS IDENTITY NOT NULL,
  person_id INT NOT NULL
@@ -125,8 +124,8 @@ CREATE TABLE lesson (
  price_list_id INT NOT NULL,
  level_of_lesson SKILL NOT NULL,
  location CHAR(4) NOT NULL,
- students_max_amount CHAR(10) NOT NULL,
- students_min_amount CHAR(10) NOT NULL
+ students_max_amount INT NOT NULL,
+ students_min_amount INT NOT NULL
 );
 
 ALTER TABLE lesson ADD CONSTRAINT PK_lesson PRIMARY KEY (instructor_id,timeslot_id);
@@ -207,18 +206,13 @@ CREATE TABLE sibling_relation (
 
 ALTER TABLE sibling_relation ADD CONSTRAINT PK_sibling_relation PRIMARY KEY (student_id,student_sibling_id);
 
-
 ALTER TABLE rental_instrument ADD CONSTRAINT FK_rental_instrument_0 FOREIGN KEY (instrument_type_id) REFERENCES instrument_type (id);
-
 
 ALTER TABLE skill_level ADD CONSTRAINT FK_skill_level_0 FOREIGN KEY (instrument_type_id) REFERENCES instrument_type (id);
 
-
 ALTER TABLE contact_details ADD CONSTRAINT FK_contact_details_0 FOREIGN KEY (person_id) REFERENCES person (id);
 
-
 ALTER TABLE contact_person ADD CONSTRAINT FK_contact_person_0 FOREIGN KEY (person_id) REFERENCES person (id);
-
 
 ALTER TABLE instructor ADD CONSTRAINT FK_instructor_0 FOREIGN KEY (person_id) REFERENCES person (id);
 
