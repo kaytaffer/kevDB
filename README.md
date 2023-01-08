@@ -22,7 +22,8 @@ Next up we were given a series of queries to handle according to simulated busin
 
 **Log-phys model.png** - The logical/physical model hybrid developed for Seminar 2.
 
-**dbscript.sql** - The script that initializes the db; creating tables and setting up schemas.
+**dbbuild.sql** - The script that initializes the db; creating tables and setting up schemas.
 
 **insert.sql** - contains a script to partly fill the database with generated data, to enable queries.
 
+**queries.sql** - contains a series of sample queries and related views.

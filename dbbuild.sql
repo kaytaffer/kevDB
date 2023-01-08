@@ -143,12 +143,10 @@ ALTER TABLE student ADD CONSTRAINT PK_student PRIMARY KEY (id);
 CREATE TABLE student_lesson (
  student_id INT NOT NULL,
  instructor_id INT NOT NULL,
- timeslot_id INT NOT NULL,
- instructor_commission_id INT NOT NULL,
- price_list_id INT NOT NULL
+ timeslot_id INT NOT NULL
 );
 
-ALTER TABLE student_lesson ADD CONSTRAINT PK_student_lesson PRIMARY KEY (student_id,instructor_id,timeslot_id,instructor_commission_id,price_list_id);
+ALTER TABLE student_lesson ADD CONSTRAINT PK_student_lesson PRIMARY KEY (student_id,instructor_id,timeslot_id);
 
 
 CREATE TABLE student_skill_level (
